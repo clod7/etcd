@@ -571,6 +571,18 @@
 			"revisionTime": "2019-07-03T16:06:53Z"
 		},
 		{
+			"checksumSHA1": "9ih59WZ77U1MUAYhRufGJmzhzeA=",
+			"path": "self-discipline/etcdService",
+			"revision": "57a3333cc07c8ab4eef212caa557e6ea7c12a247",
+			"revisionTime": "2019-07-12T08:25:15Z"
+		},
+		{
+			"checksumSHA1": "1F8YyZ+EbYzAbfqEC0FVY5SgBIQ=",
+			"path": "self-discipline/etcdService/example/lib",
+			"revision": "57a3333cc07c8ab4eef212caa557e6ea7c12a247",
+			"revisionTime": "2019-07-12T08:25:15Z"
+		},
+		{
 			"checksumSHA1": "t+8zgeZRPBmIbjir1xgXmGjMSkc=",
 			"path": "self-discipline/logging",
 			"revision": "e601cc9dd91d8247a40ee553f6ba40dfb9f41511",
@@ -589,5 +601,5 @@
 			"revisionTime": "2019-06-27T02:30:58Z"
 		}
 	],
-	"rootPath": "self-discipline/etcd"
+	"rootPath": "github.com/clod7/etcd/etcdService"
 }
