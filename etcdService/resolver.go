@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/resolver"
 	"log"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -35,6 +36,7 @@ func (a *ServerBuilder) Build(target resolver.Target, cc resolver.ClientConn,
 		AddrMap: make(map[string]string),
 		cc:      cc,
 		client:  client,
+		mu:      sync.Mutex{},
 	}
 
 	r.GetAddr(target.Endpoint)
@@ -51,6 +53,7 @@ type ServerResolver struct {
 	cc         resolver.ClientConn
 	client     *clientv3.Client
 	cancelFunc context.CancelFunc
+	mu         sync.Mutex
 }
 
 func (a *ServerResolver) ResolveNow(resolver.ResolveNowOption) {}
@@ -65,9 +68,11 @@ func (a *ServerResolver) GetAddr(prefix string) {
 		log.Println(err)
 	}
 
+	a.mu.Lock()
 	for _, kv := range getResp.Kvs {
 		a.AddrMap[string(kv.Key)] = string(kv.Value)
 	}
+	a.mu.Unlock()
 
 	go a.watch(prefix)
 	a.cc.UpdateState(resolver.State{Addresses: map2addr(a.AddrMap)})
@@ -89,9 +94,13 @@ func (a *ServerResolver) watch(prefix string) {
 			for _, ev := range n.Events {
 				switch ev.Type {
 				case mvccpb.PUT:
+					a.mu.Lock()
 					a.AddrMap[string(ev.Kv.Key)] = string(ev.Kv.Value)
+					a.mu.Unlock()
 				case mvccpb.DELETE:
+					a.mu.Lock()
 					delete(a.AddrMap, string(ev.Kv.Key))
+					a.mu.Unlock()
 				}
 			}
 
